@@ -9,6 +9,7 @@ const sqlEncrypt = process.env.SQL_ENCRYPT === "true";
 
 assert(PORT, 'PORT is required');
 // assert(HOST, 'HOST is required');
+//inventoryapimanager.azurewebsites.net
 
 const config = {
     port: PORT,
