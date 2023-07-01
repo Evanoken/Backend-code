@@ -9,8 +9,8 @@
   },
   "scripts": {
     "start": "node ./src/index.js",
-    "dev": "nodemon ./src/index.js"
-  
+    "dev": "nodemon ./src/index.js",
+    "build": "webpack --config webpack.dev.js"
   },
   "keywords": [
     "inventory",
@@ -33,5 +33,8 @@
     "nodemon": "^2.0.22",
     "socket.io": "^4.7.1",
     "typescript": "^5.1.3"
+  },
+  "devDependencies": {
+    "webpack-cli": "^5.1.4"
   }
 }
