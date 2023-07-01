@@ -6,5 +6,5 @@ app.get('/' , (req, res) =>{
 })
 // Start the server
 app.listen(config.port, () => {
-  console.log(`Server is running }`);
+  console.log(`Server is up and running `);
 });

@@ -5,8 +5,19 @@ import {getOrders, createOrder, getOrderById, updateOrder, deleteOrder, graphing
 //import {getUsers, createUser, getUserById, updateUser, deleteUser, loginUser,} from "../controllers/usersController.js";
 //import { loginRequired } from "../controllers/usersController.js";
 import { login, register, loginRequired, getUsers } from '../controllers/usersController.js';
+import {Register, getCustomers,Login} from '../controllers/customerController.js'
 
 const routes = (app) => {
+    //customers
+    app
+        .route("/api/customers")
+        .get(getCustomers)
+        .post(Register)
+
+    //login
+    app
+        .route("/api/login")
+        .post(Login)
     //product routes
     app
         .route("/api/products")

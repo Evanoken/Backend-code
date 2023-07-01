@@ -8,9 +8,9 @@
     "node": ">=14.17.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node ./src/index.js",
-    "dev": "nodemon ./src/index.js"
+    "dev": "nodemon ./src/index.js",
+    "build": "webpack --mode production"
   },
   "keywords": [
     "inventory",
