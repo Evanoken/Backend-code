@@ -5,7 +5,7 @@ dotenv.config();
 
 const { PORT, SQL_USER, SQL_PWD, SQL_DB, SQL_SERVER, JWT_SECRET } = process.env;
 
-assert(PORT, 'PORT is required');
+// assert(PORT, 'PORT is required');
 // assert(HOST, 'HOST is required');
 //inventoryapimanager.azurewebsites.net
 
