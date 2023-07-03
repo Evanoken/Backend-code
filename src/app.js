@@ -6,8 +6,6 @@ import dotenv from 'dotenv';
 //import loginRequired from './controllers/usersController.js';
 import userRoutes from './routes/routes.js';
 import routes from './routes/routes.js';
-import http from 'http';
-import { Server as SocketIOServer } from 'socket.io';
 // Load environment variables from .env file
 dotenv.config();
 
@@ -22,17 +20,6 @@ app.use(express.urlencoded({ extended: true }));
 
 routes(app);
 
-const server = http.createServer(app);
-const io = new SocketIOServer(server);
-
-io.on('connection', (socket) => {
-    console.log('A user connected');
-  
-    // Handle disconnections
-    socket.on('disconnect', () => {
-      console.log('A user disconnected');
-    });
-  });
 
 app.use((req, res, next) => {
     if (req.headers && req.headers.authorization && req.headers.authorization.split(' ')[0] === 'JWT') {
