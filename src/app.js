@@ -1,10 +1,10 @@
 import express from 'express';
 import cors from 'cors';
-import morgan from 'morgan';
+// import morgan from 'morgan';
 import dotenv from 'dotenv';
 //import handleErrors from './utils/errorHandlers.js';
 //import loginRequired from './controllers/usersController.js';
-import userRoutes from './routes/routes.js';
+//import userRoutes from './routes/routes.js';
 import routes from './routes/routes.js';
 // Load environment variables from .env file
 dotenv.config();
