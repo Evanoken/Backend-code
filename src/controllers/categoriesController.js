@@ -1,127 +1,112 @@
-import ConnectionPool from 'mssql'
-//import Supplier from '../models/supplier'
-
-const pool = new ConnectionPool(config);
-
-// GET /api/suppliers
-export const getSuppliers = async (req, res) => {
+import sql from 'mssql'
+import config from '../db/config.js';
+export const getCategories = async (req, res) => {
   try {
-    await pool.connect();
+    let pool = await sql.connect(config.sql)
+    const result = await pool.request().query('SELECT * FROM Categories');
 
-    const result = await pool.request().query('SELECT * FROM suppliers');
-
-    const suppliers = result.recordset;
-    res.status(200).json(suppliers);
+    const categories = result.recordset;
+    res.status(200).json(categories);
   } catch (error) {
-    console.error('Error while fetching suppliers:', error);
-    res.status(500).json({ error: 'Unable to fetch suppliers' });
+    console.error('Error while fetching Categories:', error);
+    res.status(500).json({ error: 'Unable to fetch Categories' });
   } finally {
-    await pool.close();
+    await sql.close();
   }
 };
 
-// POST /api/suppliers
-export const createSupplier = async (req, res) => {
+// POST /api/Categories
+export const createCategory = async (req, res) => {
   try {
-    await pool.connect();
-
-    const { name, email, phone } = req.body;
+    let pool = await sql.connect(config.sql)
+    const { category_name } = req.body;
 
     const result = await pool
       .request()
-      .input('name', name)
-      .input('email', email)
-      .input('phone', phone)
-      .query('INSERT INTO suppliers (name, email, phone) VALUES (@name, @email, @phone);');
+      .input('category_name', category_name)
+      .query('INSERT INTO Categories (category_name) VALUES (@category_name);');
 
-    const createdSupplier = await Supplier.create({ name, email, phone });
-
-    res.status(201).json(createdSupplier);
+      res.status(201).json({ message: 'Category created successfully'} );
   } catch (error) {
-    console.error('Error while creating supplier:', error);
-    res.status(500).json({ error: 'Unable to create supplier' });
+    console.error('Error while creating Category:', error);
+    res.status(500).json({ error: 'Unable to create Category' });
   } finally {
-    await pool.close();
+    await sql.close();
   }
 };
 
-// GET /api/suppliers/:id
-export const getSupplierById = async (req, res) => {
+// GET /api/Categorys/:id
+export const getCategoryById = async (req, res) => {
   try {
-    await pool.connect();
-
-    const { id } = req.params;
+    let pool = await sql.connect(config.sql)
+    const { category_id } = req.params;
 
     const result = await pool
       .request()
-      .input('id', id)
-      .query('SELECT * FROM suppliers WHERE id = @id');
+      .input('category_id', category_id)
+      .query('SELECT * FROM Categories WHERE category_id = @category_id');
 
-    const supplier = result.recordset[0];
-    if (!supplier) {
-      return res.status(404).json({ error: 'Supplier not found' });
+    const category = result.recordset[0];
+    if (!category) {
+      return res.status(404).json({ error: 'Category not found' });
     }
 
-    res.status(200).json(supplier);
+    res.status(200).json(category);
   } catch (error) {
-    console.error('Error while fetching supplier:', error);
-    res.status(500).json({ error: 'Unable to fetch supplier' });
+    console.error('Error while fetching Category:', error);
+    res.status(500).json({ error: 'Unable to fetch Category' });
   } finally {
-    await pool.close();
+    await sql.close();
   }
 };
 
-// PUT /api/suppliers/:id
-export const updateSupplier = async (req, res) => {
+// PUT /api/Categorys/:id
+export const updateCategory = async (req, res) => {
   try {
-    await pool.connect();
+    let pool = await sql.connect(config.sql)
 
-    const { id } = req.params;
-    const { name, email, phone } = req.body;
-
+    const { category_id } = req.params;
+    const { category_name } = req.body;
     const result = await pool
       .request()
-      .input('id', id)
-      .input('name', name)
-      .input('email', email)
-      .input('phone', phone)
-      .query('UPDATE suppliers SET name = @name, email = @email, phone = @phone WHERE id = @id');
+      .input('category_id', category_id)
+      .input('category_name', category_name)
+      .query('UPDATE Categories SET category_name = @category_name WHERE category_id = @category_id');
 
     if (result.rowsAffected[0] === 0) {
-      return res.status(404).json({ error: 'Supplier not found' });
+      return res.status(404).json({ error: 'Category not found' });
     }
 
-    const updatedSupplier = await Supplier.findByPk(id);
+    const updatedCategory = await Category.findByPk(category_id);
 
-    res.status(200).json(updatedSupplier);
+    res.status(200).json(updatedCategory);
   } catch (error) {
-    console.error('Error while updating supplier:', error);
-    res.status(500).json({ error: 'Unable to update supplier' });
+    console.error('Error while updating Category:', error);
+    res.status(500).json({ error: 'Unable to update Category' });
   } finally {
-    await pool.close();
+    await sql.close();
   }
 };
 
-// DELETE /api/suppliers/:id
-export const deleteSupplier = async (req, res) => {
+// DELETE /api/Categorys/:id
+export const deleteCategory = async (req, res) => {
   try {
-    await pool.connect();
-
-    const { id } = req.params;
+    let pool = await sql.connect(config.sql)
+    const { category_id } = req.params;
 
     const result = await pool
       .request()
-      .input('id', id)
-      .query('DELETE FROM suppliers WHERE id = @id');
+      .input('category_id', category_id)
+      .query('DELETE FROM Categories WHERE category_id = @category_id');
 
     if (result.rowsAffected[0] === 0) {
-      return res.status(404).json({ error: 'Supplier not found' });
+      return res.status(404).json({ error: 'Category not found' });
     }
 
-    res.status(200).json({ message: 'Supplier deleted successfully' });
+    res.status(200).json({ message: 'Category deleted successfully' });
   } catch (error) {
-    console.error('Error while deleting supplier:', error);
-    res.status(500).json({ error: 'Unable to delete supplier' });
+    console.error('Error while deleting Category:', error);
+    res.status(500).json({ error: 'Unable to delete Category' });
   } finally {
     await pool.close();
   }

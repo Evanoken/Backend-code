@@ -1,5 +1,5 @@
 import {getProducts, createProduct, getProductById, updateProduct, deleteProduct} from "../controllers/productsController.js";
-// import {getCategories, createCategory, getCategoryById, updateCategory, deleteCategory} from "../controllers/categoriesController.js";
+import {getCategories} from "../controllers/categoriesController.js";
 import {getSuppliers, createSupplier, getSupplierById, updateSupplier, deleteSupplier} from "../controllers/suppliersController.js";
 import {getOrders, createOrder, getOrderById, updateOrder, deleteOrder, graphing} from "../controllers/ordersController.js";
 //import {getUsers, createUser, getUserById, updateUser, deleteUser, loginUser,} from "../controllers/usersController.js";
@@ -44,7 +44,7 @@ const routes = (app) => {
     app
         .route("/api/orders")
         .get(getOrders)
-        .post(loginRequired, createOrder);
+        .post(createOrder);
     app.route("/api/total")
         .get(graphing)
     // app.route("/api/sales/chart")
@@ -62,6 +62,15 @@ const routes = (app) => {
         .get(getUsers)
     app.route('/auth/login')
         .post(login);
+    // Category routes
+    app.route('/api/categories')
+        .get(getCategories)
+    //     .post(loginRequired, createCategory);
+    // app.route('/api/categories/:id')
+    //     .get(getCategoryById)
+    //     .put(loginRequired, updateCategory)
+    //     .delete(loginRequired, deleteCategory);
+
     
 };
 

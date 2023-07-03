@@ -39,47 +39,35 @@ export const getOrders = async (req, res) => {
 };
 
 
-export const createOrder = async (req, res) => {
-  try {
-    const { date, totalAmount, productIds } = req.body;
+export const createOrder = async(req, res) => {
+  try{
     let pool = await sql.connect(config.sql);
-    const transaction = new sql.Transaction(pool);
-    await transaction.begin();
-    try {
-      const orderRequest = new sql.Request(transaction);
-      orderRequest.input('date', sql.Date, date);
-      orderRequest.input('totalAmount', sql.Decimal, totalAmount);
-      const orderResult = await orderRequest.query('INSERT INTO Orders (date, totalAmount) VALUES (@date, @totalAmount); SELECT SCOPE_IDENTITY() AS orderId');
-      const orderId = orderResult.recordset[0].orderId;
-
-      for (const productId of productIds) {
-        const orderDetailRequest = new sql.Request(transaction);
-        orderDetailRequest.input('orderId', sql.Int, orderId);
-        orderDetailRequest.input('productId', sql.Int, productId);
-        await orderDetailRequest.query('INSERT INTO OrderDetails (orderId, productId) VALUES (@orderId, @productId)');
-      }
-
-      await transaction.commit();
-      res.status(201).json({ message: 'Order created successfully' });
-    } catch (error) {
-      await transaction.rollback();
-      throw error;
-    }
-  } catch (error) {
+    const {order_date, customer_id, total_amount} = req.body;
+    const result = await pool
+    .request()
+    .input('order_date', order_date)
+    .input('customer_id', customer_id)
+    .input('total_amount', total_amount)
+    .query('INSERT INTO Orders (order_date, customer_id, total_amount) VALUES (@order_date, @customer_id, @total_amount);');
+    res.status(201).json({message: 'Order created successfully'});
+  } 
+  catch (error) {
     console.error('Error while creating order:', error);
     res.status(500).json({ error: 'Unable to create order' });
-  } finally {
+  }
+  finally {
     sql.close();
   }
-};
+}
+
 
 export const getOrderById = async (req, res) => {
   try {
-    const { orderId } = req.params;
+    const { order_id } = req.params;
     let pool = await sql.connect(config.sql);
     const request = pool.request()
-      .input('orderId', sql.Int, orderId)
-      .query('SELECT * FROM Orders WHERE Order_id = @orderId');
+      .input('order_id', sql.Int, order_id)
+      .query('SELECT * FROM Orders WHERE Order_id = @order_id');
 
     const order = (await request).recordset[0];
     if (!order) {
@@ -97,14 +85,14 @@ export const getOrderById = async (req, res) => {
 
 export const updateOrder = async (req, res) => {
   try {
-    const { orderId } = req.params;
+    const { order_id } = req.params;
     const { date, totalAmount } = req.body;
     let pool = await sql.connect(config.sql);
     const request = pool.request()
-      .input('orderId', sql.Int, orderId)
+      .input('order_id', sql.Int, order_id)
       .input('date', sql.Date, date)
       .input('totalAmount', sql.Decimal, totalAmount)
-      .query('UPDATE Orders SET date = @date, totalAmount = @totalAmount WHERE Order_id = @orderId');
+      .query('UPDATE Orders SET date = @date, totalAmount = @totalAmount WHERE Order_id = @order_id');
       
     const order = (await request).recordset[0];
     if (!order) {
@@ -122,18 +110,18 @@ export const updateOrder = async (req, res) => {
 
 export const deleteOrder = async (req, res) => {
   try {
-    const { orderId } = req.params;
+    const { order_id } = req.params;
     let pool = await sql.connect(config.sql);
     const transaction = new sql.Transaction(pool);
     await transaction.begin();
     try {
       const deleteOrderRequest = new sql.Request(transaction);
-      deleteOrderRequest.input('orderId', sql.Int, orderId);
-      await deleteOrderRequest.query('DELETE FROM Orders WHERE Order_id = @orderId');
+      deleteOrderRequest.input('order_id', sql.Int, order_id);
+      await deleteOrderRequest.query('DELETE FROM Orders WHERE Order_id = @order_id');
 
       const deleteOrderDetailsRequest = new sql.Request(transaction);
-      deleteOrderDetailsRequest.input('orderId', sql.Int, orderId);
-      await deleteOrderDetailsRequest.query('DELETE FROM OrderDetails WHERE Order_id = @orderId');
+      deleteOrderDetailsRequest.input('order_id', sql.Int, order_id);
+      await deleteOrderDetailsRequest.query('DELETE FROM OrderDetails WHERE Order_id = @order_id');
 
       await transaction.commit();
       res.status(200).json({ message: 'Order deleted successfully' });
